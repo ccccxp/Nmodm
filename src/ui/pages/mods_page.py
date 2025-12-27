@@ -914,6 +914,9 @@ class ModsPage(BasePage):
                 lines.append(f'path = "{native_path}"')
                 if native.optional:
                     lines.append(f"optional = {str(native.optional).lower()}")
+                # 显示预加载设置
+                if native.load_early:
+                    lines.append(f"load_early = {str(native.load_early).lower()}")
                 if native.initializer:
                     lines.append(f'initializer = "{native.initializer}"')
                 if native.finalizer:
