@@ -61,6 +61,8 @@
     "force_priority_load_set_failed": "设置 {dll_name} 强制优先加载失败",
     "force_priority_load_cleared": "已清除 {dll_name} 的强制优先加载",
     "force_priority_load_clear_failed": "清除 {dll_name} 强制优先加载失败",
+    "load_early_enabled": "已开启 {dll_name} 的预加载",
+    "load_early_disabled": "已关闭 {dll_name} 的预加载",
     "note_placeholder": "输入备注信息... (回车保存，Esc取消)",
     "nrsc_config_not_found": "未找到 nrsc_settings.ini 配置文件",
     "nrsc_config_read_failed": "读取配置文件失败: {error}",
@@ -100,6 +102,8 @@
     "remove_external_mod": "🗑️ 移除外部Mod",
     "clear_force_priority_load": "🔓 清除强制优先加载",
     "force_priority_load": "⬆️ 强制优先加载",
+    "enable_load_early": "⚡ 开启预加载",
+    "disable_load_early": "🚫 取消预加载",
     "config_seamlesscoop": "⚙️ 配置 SeamlessCoop",
     "nighter_settings": "🌙 深夜模式设置",
     "remove_external_dll": "🗑️ 移除外部DLL"

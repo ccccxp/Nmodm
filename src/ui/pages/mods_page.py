@@ -1273,6 +1273,15 @@ start "Nmodm-ME3" {' '.join(cmd_parts)}
             load_first_action = menu.addAction(t("mods_page.context_menu.force_priority_load"))
             load_first_action.triggered.connect(lambda: self.set_force_load_first_native(clean_name))
 
+        # 添加预加载功能 (load_early)
+        is_load_early = self.mod_manager.is_native_load_early(clean_name)
+        if is_load_early:
+            load_early_action = menu.addAction(t("mods_page.context_menu.disable_load_early"))
+            load_early_action.triggered.connect(lambda: self.toggle_load_early(clean_name, False))
+        else:
+            load_early_action = menu.addAction(t("mods_page.context_menu.enable_load_early"))
+            load_early_action.triggered.connect(lambda: self.toggle_load_early(clean_name, True))
+
         # 添加特定DLL的配置功能
         menu.addSeparator()
 
@@ -1521,6 +1530,19 @@ start "Nmodm-ME3" {' '.join(cmd_parts)}
             self.config_changed.emit()
         else:
             self.show_status(t("mods_page.status.force_priority_load_clear_failed").format(dll_name=dll_name), "error")
+
+    def toggle_load_early(self, dll_name: str, enabled: bool):
+        """切换DLL预加载状态"""
+        if self.mod_manager.set_native_load_early(dll_name, enabled):
+            status_msg = t("mods_page.status.load_early_enabled").format(dll_name=dll_name) if enabled else t("mods_page.status.load_early_disabled").format(dll_name=dll_name)
+            self.show_status(status_msg, "success")
+            # 保存配置并更新预览
+            self.mod_manager.save_config()
+            self.update_config_preview()
+            # 发出配置变化信号
+            self.config_changed.emit()
+        else:
+            self.show_status("Failed to toggle load early", "error")
 
     def configure_nrsc_settings(self):
         """配置SeamlessCoop设置"""

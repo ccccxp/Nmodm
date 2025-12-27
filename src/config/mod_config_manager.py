@@ -32,6 +32,7 @@ class ModNative:
     finalizer: Optional[str] = None
     load_after: Optional[List[Dict[str, Any]]] = None
     load_before: Optional[List[Dict[str, Any]]] = None
+    load_early: bool = False  # 是否在早期加载
     is_external: bool = False  # 标记是否为外部DLL
     comment: str = ""  # 用户备注
 
@@ -300,6 +301,7 @@ class ModConfigManager:
                     finalizer=native_data.get('finalizer'),
                     load_after=native_data.get('load_after'),
                     load_before=native_data.get('load_before'),
+                    load_early=native_data.get('load_early', False),
                     is_external=is_external
                 )
                 self.natives.append(native)
@@ -355,6 +357,8 @@ class ModConfigManager:
                             native_dict['load_after'] = native.load_after
                         if native.load_before:
                             native_dict['load_before'] = native.load_before
+                        if native.load_early:
+                            native_dict['load_early'] = native.load_early
                         config_data['natives'].append(native_dict)
             
             # 保存到文件 - 使用自定义格式化以确保正确的TOML格式
@@ -409,7 +413,7 @@ class ModConfigManager:
                 return True
         return False
     
-    def add_native(self, dll_path: str, optional: bool = False, enabled: bool = True) -> bool:
+    def add_native(self, dll_path: str, optional: bool = False, enabled: bool = True, load_early: bool = False) -> bool:
         """添加native DLL"""
         # 处理外部DLL标识
         is_external = dll_path.endswith(" (外部)")
@@ -426,8 +430,12 @@ class ModConfigManager:
         else:
             # 对于内部DLL，使用传入的路径（已经包含正确的相对路径）
             actual_path = clean_path
+            
+        # 特殊处理：SeamlessCoop/nrsc.dll 默认开启 load_early
+        if not load_early and "seamlesscoop" in clean_path.lower() and "nrsc.dll" in clean_path.lower():
+            load_early = True
 
-        native = ModNative(path=actual_path, optional=optional, enabled=enabled, is_external=is_external)
+        native = ModNative(path=actual_path, optional=optional, enabled=enabled, load_early=load_early, is_external=is_external)
         self.natives.append(native)
         return True
     
@@ -938,6 +946,31 @@ class ModConfigManager:
             return intersection_count >= 1
         else:
             return intersection_count >= len(other_enabled_mods) * 0.5
+
+    def set_native_load_early(self, dll_name: str, enabled: bool) -> bool:
+        """设置DLL预加载状态"""
+        clean_name = dll_name.replace(" (外部)", "")
+
+        for native in self.natives:
+            # 匹配DLL名称或路径
+            if (Path(native.path).name == clean_name or
+                native.path == clean_name or
+                native.path.endswith(clean_name)):
+                native.load_early = enabled
+                return True
+        return False
+
+    def is_native_load_early(self, dll_name: str) -> bool:
+        """检查DLL是否开启预加载"""
+        clean_name = dll_name.replace(" (外部)", "")
+
+        for native in self.natives:
+            # 匹配DLL名称或路径
+            if (Path(native.path).name == clean_name or
+                native.path == clean_name or
+                native.path.endswith(clean_name)):
+                return getattr(native, 'load_early', False)
+        return False
 
     def get_native_load_before(self, dll_name: str) -> Optional[List[Dict[str, Any]]]:
         """获取DLL的前置加载设置"""
@@ -1575,6 +1608,9 @@ class ModConfigManager:
                 if 'load_before' in native and native['load_before']:
                     load_before_str = self._format_load_after(native['load_before'])
                     file_handle.write(f'load_before = {load_before_str}\n')
+
+                if 'load_early' in native and native['load_early']:
+                    file_handle.write(f'load_early = {str(native["load_early"]).lower()}\n')
 
                 file_handle.write('\n')
 

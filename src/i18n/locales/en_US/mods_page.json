@@ -61,6 +61,8 @@
     "force_priority_load_set_failed": "Failed to set force priority load for {dll_name}",
     "force_priority_load_cleared": "Force priority load cleared for {dll_name}",
     "force_priority_load_clear_failed": "Failed to clear force priority load for {dll_name}",
+    "load_early_enabled": "Early load enabled for {dll_name}",
+    "load_early_disabled": "Early load disabled for {dll_name}",
     "note_placeholder": "Enter note... (Enter to save, Esc to cancel)",
     "nrsc_config_not_found": "nrsc_settings.ini not found",
     "nrsc_config_read_failed": "Failed to read config: {error}",
@@ -100,6 +102,8 @@
     "remove_external_mod": "🗑️ Remove External Mod",
     "clear_force_priority_load": "🔓 Clear Force Priority Load",
     "force_priority_load": "⬆️ Force Priority Load",
+    "enable_load_early": "⚡ Enable Early Load",
+    "disable_load_early": "🚫 Disable Early Load",
     "config_seamlesscoop": "⚙️ Config SeamlessCoop",
     "nighter_settings": "🌙 Nighter Settings",
     "remove_external_dll": "🗑️ Remove External DLL"
